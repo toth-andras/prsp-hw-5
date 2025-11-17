@@ -1,0 +1,15 @@
+services:
+  muffin-db-k8s:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=muffin-wallet
+      - POSTGRES_PASSWORD=muffin-wallet
+      - POSTGRES_DB=muffin_wallet
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - muffin_db_k8s_volume:/var/lib/postgresql/data
+
+volumes:
+  muffin_db_k8s_volume:

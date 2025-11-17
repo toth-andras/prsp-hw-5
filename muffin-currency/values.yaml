@@ -1,0 +1,23 @@
+app:
+  name: muffin-currency
+  port: &appPort 8080
+  image: userviktoriuss/muffin-currency:1.0.0
+  replicasCount: 3
+  probes:
+    liveness:
+      httpGet:
+        path: /rate?from=PLAIN&to=CHOKOLATE
+        port: *appPort
+      initialDelaySeconds: 5
+      periodSeconds: 10
+
+    readiness:
+      httpGet:
+        path: /rate?from=PLAIN&to=CHOKOLATE
+        port: *appPort
+      initialDelaySeconds: 2
+      periodSeconds: 5
+
+service:
+  type: ClusterIP
+  port: 8083

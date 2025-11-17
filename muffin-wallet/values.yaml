@@ -1,0 +1,53 @@
+app:
+  name: &appName muffin-wallet
+  port: &appPort 8081
+  image: aadan1lov/muffin-wallet:1.1.0
+  imagePullPolicy: Always
+  replicasCount: 3
+  probes:
+    liveness:
+      httpGet:
+        path: /actuator/health/liveness
+        port: *appPort
+      initialDelaySeconds: 30
+      periodSeconds: 5
+
+    readiness:
+      httpGet:
+        path: /actuator/health/readiness
+        port: *appPort
+      initialDelaySeconds: 10
+      periodSeconds: 10
+
+service:
+  name: *appName
+  type: ClusterIP
+  port: &servicePort 8083
+
+db:
+  url: jdbc:postgresql://host.minikube.internal:5432/muffin_wallet
+  username: muffin-wallet
+
+configMap:
+  name: *appName
+  mountPath: /app/config
+  filename: application.yaml
+
+secret:
+  name: *appName
+
+ingress:
+  name: *appName
+  host: muffin-wallet.com
+  paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: *appName
+          port:
+            number: *servicePort
+
+external:
+  muffinCurrency:
+    url : http://muffin-currency:8083/rate

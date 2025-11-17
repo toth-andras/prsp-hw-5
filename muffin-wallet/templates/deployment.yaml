@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.app.name }}
+  labels:
+    {{- include "identificationLabel" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.app.replicasCount }}
+  selector:
+    matchLabels:
+      {{- include "identificationLabel" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "identificationLabel" . | nindent 8 }}
+    spec:
+      volumes:
+        - name: application-config-volume
+          configMap:
+            name: {{ .Values.configMap.name }}
+      containers:
+        - name: {{ .Values.app.name }}
+          image: {{ .Values.app.image }}
+          imagePullPolicy: {{ .Values.app.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.app.port }}
+          volumeMounts:
+            - name: application-config-volume
+              mountPath: {{ .Values.configMap.mountPath }}
+          envFrom:
+            - secretRef:
+                name: {{ .Values.secret.name }}
+            - configMapRef:
+                name: {{ .Values.configMap.name }}-env
+          livenessProbe:
+            {{- toYaml .Values.app.probes.liveness | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.app.probes.readiness | nindent 12 }}
