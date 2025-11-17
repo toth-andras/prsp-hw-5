@@ -9,14 +9,14 @@ app:
       httpGet:
         path: /actuator/health/liveness
         port: *appPort
-      initialDelaySeconds: 30
+      initialDelaySeconds: 90
       periodSeconds: 5
 
     readiness:
       httpGet:
         path: /actuator/health/readiness
         port: *appPort
-      initialDelaySeconds: 10
+      initialDelaySeconds: 90
       periodSeconds: 10
 
 service:

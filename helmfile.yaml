@@ -1,0 +1,12 @@
+releases:
+  - name: muffin-currency
+    chart: ./muffin-currency
+    values:
+    - ./muffin-currency/values.yaml
+
+  - name: muffin-wallet
+    chart: ./muffin-wallet
+    values:
+      - ./muffin-wallet/values.yaml
+    secrets:
+      - ./muffin-wallet/database-password.yaml
